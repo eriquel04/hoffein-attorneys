@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Admin Dashboard | Hoffein Attorneys
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body class="portal-page" data-portal-role="admin">
+
+
+<aside class="portal-sidebar">
+
+    <a href="{{ url_for('admin_dashboard') }}" class="portal-brand">
+        <img src="{{ url_for('static', filename='images/hoffein.png') }}" alt="Hoffein Attorneys Logo">
+        <span class="portal-brand-name">HOFFEIN</span>
+        <span class="portal-brand-type">ATTORNEYS</span>
+        <span class="portal-motto">Clarity when it matters.</span>
+    </a>
+
+    <div class="portal-menu-label">Administration</div>
+    <nav class="portal-menu" aria-label="Administrator workspace navigation">
+        <a class="is-active" href="#overview" data-portal-menu="overview"><span class="portal-menu-icon">⌂</span> Dashboard</a>
+        <a href="#clients" data-portal-menu="clients"><span class="portal-menu-icon">◎</span> Clients</a>
+        <a href="#intake" data-portal-menu="intake"><span class="portal-menu-icon">＋</span> Intake</a>
+        <a href="#lawyers" data-portal-menu="lawyers"><span class="portal-menu-icon">♙</span> Lawyers</a>
+        <a href="#cases" data-portal-menu="cases"><span class="portal-menu-icon">◇</span> Cases</a>
+        <a href="#documents" data-portal-menu="documents"><span class="portal-menu-icon">▣</span> Documents</a>
+        <a href="#appointments" data-portal-menu="appointments"><span class="portal-menu-icon">◷</span> Appointments</a>
+        <a href="#messages" data-portal-menu="messages"><span class="portal-menu-icon">✉</span> Messages</a>
+        <a href="{{ url_for('profile') }}"><span class="portal-menu-icon">○</span> Profile</a>
+    </nav>
+
+    <div class="portal-sidebar-footer">HOFFEIN ATTORNEYS<br><span>LEGAL EXCELLENCE / TRUSTED ADVICE</span></div>
+</aside>
+
+<header class="navbar portal-topbar">
+
+    <div class="nav-container">
+
+        <button class="portal-menu-toggle" type="button" aria-label="Toggle navigation">☰</button>
+        <div class="portal-search">⌕ <span>Search workspace</span></div>
+
+
+        <nav>
+
+            <a class="portal-profile" href="{{ url_for('profile') }}"><span>{{ user.name[:1]|upper }}</span>{{ user.name }}</a>
+            <a class="portal-logout" href="{{ url_for('logout') }}">
+                logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="dashboard-main">
+
+
+    <div class="dashboard-header admin-dashboard-header">
+        <div>
+            <span class="dashboard-eyebrow">ADMINISTRATION</span>
+            <h1 class="dashboard-title">Admin workspace</h1>
+            <p class="dashboard-subtitle">
+                A clear view of people, matters and the work moving through the firm.
+            </p>
+        </div>
+        <div class="admin-header-note">
+            <span>Signed in as</span>
+            <strong>{{ user.name }}</strong>
+            <small>{{ user.email }}</small>
+        </div>
+    </div>
+
+
+    <section class="dashboard-section intake-management-section" data-portal-section="intake">
+        <span class="dashboard-eyebrow">FIRM INTAKE</span>
+        <h2>Intake Management</h2>
+        <p>Fetch a legal service request before deciding whether to accept it as an official matter.</p>
+        <form class="client-search-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+            <label for="intake_search_id">Intake ID</label>
+            <div class="client-search-controls">
+                <input type="search" id="intake_search_id" name="intake_id" value="{{ intake_search }}" placeholder="e.g. 1" inputmode="numeric" required>
+                <button type="submit" class="btn">Fetch intake</button>
+            </div>
+        </form>
+        {% if intake_search_error %}<div class="client-search-message is-error" role="alert">{{ intake_search_error }}</div>{% endif %}
+        {% if intake_result %}
+            <article class="intake-result client-result">
+                <div class="client-result-header"><div><span class="client-id-label">INTAKE ID {{ intake_result.id }}</span><strong>{{ intake_result.practice_area }}</strong></div><span class="client-status">{{ intake_result.status }}</span></div>
+                <div class="client-details-grid"><div><span>Client</span><strong>{{ intake_result.client_name }}</strong></div><div><span>Client ID</span><strong>{{ intake_result.client_public_id }}</strong></div><div><span>Urgency</span><strong>{{ intake_result.urgency }}</strong></div><div><span>Submitted</span><strong>{{ intake_result.created_at }}</strong></div></div>
+                <p class="case-result-description">{{ intake_result.problem }}</p>
+                {% if intake_result.attachment_name %}<p class="case-result-description">Attachment: {{ intake_result.attachment_name }}</p>{% endif %}
+                {% if intake_result.status == "Submitted" %}<form action="{{ url_for('approve_legal_service_request', request_id=intake_result.id) }}" method="POST"><button type="submit" class="btn">Approve and create matter</button></form>{% endif %}
+            </article>
+        {% else %}<p class="case-empty-state">Enter an Intake ID above to review one request.</p>{% endif %}
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- FLASH MESSAGES -->
+    <!-- ================================================= -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div style="
+                    padding:15px;
+                    margin:15px 0;
+                    border-radius:6px;
+                    background:#f0f0f0;
+                ">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+
+    <!-- ================================================= -->
+    <!-- DASHBOARD STATISTICS -->
+    <!-- ================================================= -->
+
+    <div class="feature-grid dashboard-stats portal-summary admin-stat-grid">
+
+
+        <div class="feature-card stat-card">
+
+            <div class="feature-icon">01</div>
+
+            <h3>
+                Users
+            </h3>
+
+            <p>
+                {{ clients|length + lawyers|length + 1 }} total accounts
+            </p>
+
+        </div>
+
+
+        <div class="feature-card stat-card">
+
+            <div class="feature-icon">02</div>
+
+            <h3>
+                Cases
+            </h3>
+
+            <p>
+                {{ cases|length }} active matters
+            </p>
+
+        </div>
+
+
+        <div class="feature-card stat-card">
+
+            <div class="feature-icon">03</div>
+
+            <h3>
+                Documents
+            </h3>
+
+            <p>
+                {{ documents|length }} uploaded files
+            </p>
+
+        </div>
+
+
+        <div class="feature-card stat-card">
+
+            <div class="feature-icon">04</div>
+
+            <h3>
+                Reports
+            </h3>
+
+            <p>
+                {{ lawyers|length }} lawyers / {{ clients|length }} clients
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- ADD LAWYER -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section" data-portal-section="overview">
+
+
+        <h2>
+            Add New Lawyer
+        </h2>
+
+
+        <p>
+            Create a lawyer account and add their professional
+            specialization to the system.
+        </p>
+
+
+        <form
+            action="{{ url_for('add_lawyer') }}"
+            method="POST"
+            style="margin-top:20px;"
+        >
+
+
+            <!-- FULL NAME -->
+
+            <div style="margin-bottom:15px;">
+
+                <label for="lawyer_full_name">
+
+                    <strong>
+                        Full Name
+                    </strong>
+
+                </label>
+
+                <br><br>
+
+                <input
+                    type="text"
+                    id="lawyer_full_name"
+                    name="full_name"
+                    placeholder="e.g. John Michael"
+                    required
+                    style="padding:10px; width:300px;"
+                >
+
+            </div>
+
+
+
+            <!-- EMAIL -->
+
+            <div style="margin-bottom:15px;">
+
+                <label for="lawyer_email">
+
+                    <strong>
+                        Email Address
+                    </strong>
+
+                </label>
+
+                <br><br>
+
+                <input
+                    type="email"
+                    id="lawyer_email"
+                    name="email"
+                    placeholder="lawyer@example.com"
+                    required
+                    style="padding:10px; width:300px;"
+                >
+
+            </div>
+
+
+
+            <!-- PASSWORD -->
+
+            <div style="margin-bottom:15px;">
+
+                <label for="lawyer_password">
+
+                    <strong>
+                        Password
+                    </strong>
+
+                </label>
+
+                <br><br>
+
+                <input
+                    type="password"
+                    id="lawyer_password"
+                    name="password"
+                    placeholder="Create login password"
+                    required
+                    minlength="6"
+                    style="padding:10px; width:300px;"
+                >
+
+            </div>
+
+
+
+            <!-- SPECIALIZATION -->
+
+            <div style="margin-bottom:20px;">
+
+                <label for="specialization">
+
+                    <strong>
+                        Specialization
+                    </strong>
+
+                </label>
+
+                <br><br>
+
+                <select
+                    id="specialization"
+                    name="specialization"
+                    style="padding:10px; min-width:320px;"
+                >
+
+                    <option value="">
+                        -- Select Specialization --
+                    </option>
+
+                    <option value="Corporate Law">
+                        Corporate Law
+                    </option>
+
+                    <option value="Criminal Law">
+                        Criminal Law
+                    </option>
+
+                    <option value="Family Law">
+                        Family Law
+                    </option>
+
+                    <option value="Civil Law">
+                        Civil Law
+                    </option>
+
+                    <option value="Employment Law">
+                        Employment Law
+                    </option>
+
+                    <option value="Commercial Law">
+                        Commercial Law
+                    </option>
+
+                    <option value="Property Law">
+                        Property Law
+                    </option>
+
+                    <option value="Constitutional Law">
+                        Constitutional Law
+                    </option>
+
+                    <option value="Immigration Law">
+                        Immigration Law
+                    </option>
+
+                    <option value="Intellectual Property">
+                        Intellectual Property
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <button
+                type="submit"
+                class="btn"
+            >
+
+                ⚖ Add Lawyer
+
+            </button>
+
+
+        </form>
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- CREATE CASE -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section lawyer-lookup-section" data-portal-section="lawyers">
+        <div class="section-intro">
+            <span class="dashboard-eyebrow">LAWYER DIRECTORY</span>
+            <h2>Lawyer Management</h2>
+            <p>Search for one lawyer by Lawyer ID to review their profile and workload.</p>
+        </div>
+
+        <form class="client-search-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+            <label for="lawyer_search_id">Lawyer ID</label>
+            <div class="client-search-controls">
+                <input type="search" id="lawyer_search_id" name="lawyer_id" value="{{ lawyer_search }}" placeholder="e.g. 2" inputmode="numeric" required>
+                <button type="submit" class="btn">Search lawyer</button>
+            </div>
+        </form>
+
+        {% if lawyer_search_error %}
+            <div class="client-search-message is-error" role="alert">{{ lawyer_search_error }}</div>
+        {% endif %}
+
+        {% if lawyer_result %}
+            <article class="client-result lawyer-result">
+                <div class="client-result-header">
+                    <div>
+                        <span class="client-id-label">LAWYER ID {{ lawyer_result.id }}</span>
+                        <strong>{{ lawyer_result.full_name }}</strong>
+                    </div>
+                    <span class="client-status">Lawyer account</span>
+                </div>
+                <div class="client-details-grid">
+                    <div><span>Email</span><strong>{{ lawyer_result.email }}</strong></div>
+                    <div><span>Phone</span><strong>{{ lawyer_result.phone or "Not provided" }}</strong></div>
+                    <div><span>Specialization</span><strong>{{ lawyer_result.specialization or "Not specified" }}</strong></div>
+                    <div><span>Assigned cases</span><strong>{{ lawyer_result.assigned_cases }}</strong></div>
+                </div>
+            </article>
+        {% else %}
+            <p class="case-empty-state">Enter a Lawyer ID above to view one lawyer.</p>
+        {% endif %}
+    </section>
+
+    <section class="dashboard-section" data-portal-section="cases">
+
+        <span class="dashboard-eyebrow">CASE CREATION</span>
+        <h2>Case Creation</h2>
+
+
+        <p>Create a legal case with a Client ID, description, and lawyer assignment.</p>
+
+
+        <form
+            action="{{ url_for('create_case') }}"
+            method="POST"
+            style="margin-top:20px;"
+        >
+
+
+            <div style="margin-bottom:15px;">
+
+                <label for="case_number">
+                    <strong>Case Number</strong>
+                </label>
+
+                <br><br>
+
+                <input
+                    type="text"
+                    id="case_number"
+                    name="case_number"
+                    placeholder="e.g. HOF-2026-002"
+                    required
+                    style="padding:10px; width:300px;"
+                >
+
+            </div>
+
+
+
+            <div style="margin-bottom:15px;">
+                <label for="client_public_id"><strong>Client ID</strong></label>
+                <br><br>
+                <input type="text" id="client_public_id" name="client_public_id" placeholder="e.g. HOF-CL-AD29057F" required style="padding:10px; width:320px;">
+                <small class="field-help">Use the Client ID provided when the client registered.</small>
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <label for="title"><strong>Case Title</strong></label>
+                <br><br>
+                <input type="text" id="title" name="title" placeholder="Enter case title" required style="padding:10px; width:300px;">
+            </div>
+
+            <div style="margin-bottom:15px;">
+                <label for="description"><strong>Description</strong></label>
+                <br><br>
+                <textarea id="description" name="description" placeholder="Describe the case" rows="5" style="padding:10px; width:300px;"></textarea>
+            </div>
+
+
+
+            <div style="margin-bottom:20px;">
+
+                <label for="lawyer_id">
+                    <strong>Assign Lawyer</strong>
+                </label>
+
+                <br><br>
+
+                <select
+                    id="lawyer_id"
+                    name="lawyer_id"
+                    style="padding:10px; min-width:320px;"
+                >
+
+                    <option value="">
+                        -- No Lawyer Assigned --
+                    </option>
+
+
+                    {% for lawyer in lawyers %}
+
+                        <option value="{{ lawyer.id }}">
+
+                            {{ lawyer.full_name }}
+
+                            {% if lawyer.specialization %}
+
+                                -
+                                {{ lawyer.specialization }}
+
+                            {% endif %}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <button
+                type="submit"
+                class="btn"
+            >
+
+                ⚖ Create Case
+
+            </button>
+
+
+        </form>
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- DOCUMENT UPLOAD -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section" data-portal-section="documents">
+
+
+        <h2>
+            Document Management
+        </h2>
+
+
+        <p>
+            Upload legal documents and assign them to a specific case.
+        </p>
+
+
+        <form
+            action="{{ url_for('upload_document') }}"
+            method="POST"
+            enctype="multipart/form-data"
+            style="margin-top:20px;"
+        >
+
+
+            <div style="margin-bottom:20px;">
+
+                <label for="document_case_id">
+
+                    <strong>
+                        Select Case
+                    </strong>
+
+                </label>
+
+                <br><br>
+
+                <select
+                    id="document_case_id"
+                    name="case_id"
+                    required
+                    style="padding:10px; min-width:320px;"
+                >
+
+                    <option value="">
+                        -- Select Case --
+                    </option>
+
+
+                    {% for case in cases %}
+
+                        <option value="{{ case.id }}">
+
+                            {{ case.case_number }}
+                            -
+                            {{ case.title }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+
+            <div style="margin-bottom:20px;">
+
+                <label for="document_type">
+
+                    <strong>
+                        Document Type
+                    </strong>
+
+                </label>
+
+                <br><br>
+
+                <select
+                    id="document_type"
+                    name="document_type"
+                    style="padding:10px; min-width:320px;"
+                >
+
+                    <option value="Legal Document">
+                        Legal Document
+                    </option>
+
+                    <option value="Application">
+                        Application
+                    </option>
+
+                    <option value="Evidence">
+                        Evidence
+                    </option>
+
+                    <option value="Court Document">
+                        Court Document
+                    </option>
+
+                    <option value="Business License">
+                        Business License
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <div style="margin-bottom:20px;">
+
+                <label for="document">
+
+                    <strong>
+                        Select Document
+                    </strong>
+
+                </label>
+
+                <br><br>
+
+                <input
+                    type="file"
+                    id="document"
+                    name="document"
+                    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                    required
+                >
+
+            </div>
+
+
+            <input
+                type="hidden"
+                name="browser_upload"
+                value="true"
+            >
+
+
+            <button
+                type="submit"
+                class="btn"
+            >
+
+                📤 Upload Document
+
+            </button>
+
+
+        </form>
+
+
+        <p style="margin-top:15px; font-size:14px;">
+
+            Allowed formats:
+            PDF, PNG, JPG, JPEG, DOC and DOCX.
+
+            Maximum file size:
+            10 MB.
+
+        </p>
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- CLIENT LOOKUP -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section client-lookup-section" data-portal-section="clients">
+
+        <div class="section-intro">
+            <span class="dashboard-eyebrow">CLIENT DIRECTORY</span>
+            <h2>Find a client</h2>
+            <p>Search using the Client ID generated when the account was created.</p>
+        </div>
+
+        <form class="client-search-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+            <label for="client_search_id">Client ID</label>
+            <div class="client-search-controls">
+                <input type="search" id="client_search_id" name="client_id" value="{{ client_search }}" placeholder="HOF-CL-XXXXXXXX" autocomplete="off" required>
+                <button type="submit" class="btn">Search client</button>
+            </div>
+        </form>
+
+        {% if client_search_error %}
+            <div class="client-search-message is-error" role="alert">{{ client_search_error }}</div>
+        {% endif %}
+
+        {% if client_result %}
+            <article class="client-result">
+                <div class="client-result-header">
+                    <div>
+                        <span class="client-id-label">CLIENT ID</span>
+                        <strong>{{ client_result.client_id }}</strong>
+                    </div>
+                    <span class="client-status">Client account</span>
+                </div>
+                <div class="client-details-grid">
+                    <div><span>Full name</span><strong>{{ client_result.full_name }}</strong></div>
+                    <div><span>Email</span><strong>{{ client_result.email }}</strong></div>
+                    <div><span>Phone</span><strong>{{ client_result.phone or "Not provided" }}</strong></div>
+                    <div><span>Cases</span><strong>{{ client_result.cases|length }}</strong></div>
+                </div>
+            </article>
+        {% endif %}
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- CASE MANAGEMENT -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section case-lookup-section" data-portal-section="cases">
+        <div class="section-intro">
+            <span class="dashboard-eyebrow">CASE DIRECTORY</span>
+            <h2>Case Management</h2>
+            <p>Search for a case by ID, review its details, and manage assignments and status.</p>
+        </div>
+
+        <form class="client-search-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+            <label for="case_search_id">Case ID</label>
+            <div class="client-search-controls">
+                <input type="search" id="case_search_id" name="case_id" value="{{ case_search }}" placeholder="e.g. 12" inputmode="numeric" required>
+                <button type="submit" class="btn">Search case</button>
+            </div>
+        </form>
+
+        {% if case_search_error %}
+            <div class="client-search-message is-error" role="alert">{{ case_search_error }}</div>
+        {% endif %}
+
+        {% if case_result %}
+            <article class="case-result client-result">
+                <div class="client-result-header">
+                    <div>
+                        <span class="client-id-label">CASE ID {{ case_result.id }}</span>
+                        <strong>{{ case_result.case_number }}</strong>
+                    </div>
+                    <span class="client-status">{{ case_result.status }}</span>
+                </div>
+                <div class="client-details-grid">
+                    <div><span>Client ID</span><strong>{{ case_result.client_public_id }}</strong></div>
+                    <div><span>Client</span><strong>{{ case_result.client_name }}</strong></div>
+                    <div><span>Case title</span><strong>{{ case_result.title }}</strong></div>
+                    <div><span>Assigned lawyer</span><strong>{{ case_result.lawyer_name or "Not assigned" }}</strong></div>
+                </div>
+                {% if case_result.description %}<p class="case-result-description">{{ case_result.description }}</p>{% endif %}
+            </article>
+        {% endif %}
+        {% if management_cases %}
+
+
+            {% for case in management_cases %}
+
+
+                <div
+                    class="case-item"
+                    style="margin-bottom:20px;"
+                >
+
+
+                    <strong>
+                        {{ case.case_number }}
+                    </strong>
+
+
+                    <p>
+                        Title:
+                        {{ case.title }}
+                    </p>
+
+
+                    <p>
+                        Client:
+                        {{ case.client_name }}
+                    </p>
+
+
+                    <p>
+
+                        Lawyer:
+
+                        {% if case.lawyer_name %}
+
+                            {{ case.lawyer_name }}
+
+                        {% else %}
+
+                            Not Assigned
+
+                        {% endif %}
+
+                    </p>
+
+
+                    <p>
+
+                        Status:
+
+                        <strong>
+                            {{ case.status }}
+                        </strong>
+
+                    </p>
+
+
+                    {% if case.description %}
+
+                        <p>
+                            {{ case.description }}
+                        </p>
+
+                    {% endif %}
+
+
+
+                    <!-- CHANGE STATUS -->
+
+                    <form
+                        action="{{ url_for(
+                            'assign_case_lawyer',
+                            case_id=case.id
+                        ) }}"
+                        method="POST"
+                        style="margin-top:15px;"
+                    >
+
+                        <label for="lawyer-{{ case.id }}">
+                            <strong>Assign Lawyer</strong>
+                        </label>
+
+                        <select
+                            id="lawyer-{{ case.id }}"
+                            name="lawyer_id"
+                            style="padding:8px; margin-left:10px;"
+                        >
+
+                            <option value="">Not Assigned</option>
+
+                            {% for lawyer in lawyers %}
+                                <option
+                                    value="{{ lawyer.id }}"
+                                    {% if case.lawyer_id == lawyer.id %}selected{% endif %}
+                                >
+                                    {{ lawyer.full_name }}
+                                    {% if lawyer.specialization %}
+                                        - {{ lawyer.specialization }}
+                                    {% endif %}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <button
+                            type="submit"
+                            class="btn"
+                            style="margin-left:10px;"
+                        >
+                            Assign
+                        </button>
+
+                    </form>
+
+                    <form
+                        action="{{ url_for(
+                            'update_case_status',
+                            case_id=case.id
+                        ) }}"
+                        method="POST"
+                        style="margin-top:15px;"
+                    >
+
+
+                        <label>
+
+                            <strong>
+                                Change Status
+                            </strong>
+
+                        </label>
+
+
+                        <select
+                            name="status"
+                            style="padding:8px; margin-left:10px;"
+                        >
+
+                            <option
+                                value="Pending"
+                                {% if case.status == "Pending" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Pending
+                            </option>
+
+
+                            <option
+                                value="Active"
+                                {% if case.status == "Active" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Active
+                            </option>
+
+
+                            <option
+                                value="In Progress"
+                                {% if case.status == "In Progress" %}
+                                    selected
+                                {% endif %}
+                            >
+                                In Progress
+                            </option>
+
+
+                            <option
+                                value="Completed"
+                                {% if case.status == "Completed" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Completed
+                            </option>
+
+
+                            <option
+                                value="Closed"
+                                {% if case.status == "Closed" %}
+                                    selected
+                                {% endif %}
+                            >
+                                Closed
+                            </option>
+
+
+                        </select>
+
+
+                        <button
+                            type="submit"
+                            class="btn"
+                            style="margin-left:10px;"
+                        >
+                            Update
+                        </button>
+
+
+                    </form>
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <p class="case-empty-state">
+                Enter a Case ID above to view and manage one case.
+            </p>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- UPLOADED DOCUMENTS -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section" data-portal-section="documents">
+
+
+        <h2>
+            Document Management
+        </h2>
+
+        <div class="document-request-panel">
+            <span class="dashboard-eyebrow">CLIENT DOCUMENT REQUEST</span>
+            <h3>Request a document</h3>
+            <p>Send a specific document request to the client assigned to a case.</p>
+            <form action="{{ url_for('create_document_request') }}" method="POST" class="document-request-form">
+                <select name="request_case_id" required aria-label="Case for document request">
+                    <option value="">-- Select case --</option>
+                    {% for case in cases %}
+                        <option value="{{ case.id }}">{{ case.case_number }} - {{ case.title }} - {{ case.client_name }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="request_title" placeholder="Document requested, e.g. National ID" required aria-label="Document requested">
+                <textarea name="request_instructions" rows="2" placeholder="Optional instructions for the client" aria-label="Request instructions"></textarea>
+                <button type="submit" class="btn">Send request</button>
+            </form>
+        </div>
+
+        <p>Search for a client's uploaded documents using their Client ID.</p>
+
+        <form class="client-search-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+            <label for="document_client_id">Client ID</label>
+            <div class="client-search-controls">
+                <input type="search" id="document_client_id" name="document_client_id" value="{{ document_search }}" placeholder="HOF-CL-XXXXXXXX" autocomplete="off" required>
+                <button type="submit" class="btn">Fetch documents</button>
+            </div>
+        </form>
+
+        {% if document_search_error %}
+            <div class="client-search-message is-error" role="alert">{{ document_search_error }}</div>
+        {% endif %}
+
+
+        {% if document_results %}
+
+
+            <div class="document-results-label">Documents found for {{ document_search }}</div>
+
+            {% for document in document_results %}
+
+
+                <div
+                    class="case-item"
+                    style="margin-bottom:20px;"
+                >
+
+
+                    <strong>
+                        📄 {{ document.original_filename }}
+                    </strong>
+
+
+                    <p>
+
+                        Case:
+
+                        <strong>
+                            {{ document.case_number }}
+                        </strong>
+
+                        -
+                        {{ document.case_title }}
+
+                    </p>
+
+
+                    <p>
+                        Client:
+                        {{ document.client_name }}
+                    </p>
+
+
+                    <p>
+                        Document Type:
+                        {{ document.document_type }}
+                    </p>
+
+
+                    <p>
+                        Uploaded By:
+                        {{ document.uploader_name }}
+                    </p>
+
+
+                    <p>
+                        Uploaded At:
+                        {{ document.uploaded_at }}
+                    </p>
+
+
+                    <p>
+
+                        Status:
+
+                        <strong>
+                            {{ document.status }}
+                        </strong>
+
+                    </p>
+
+
+                    <a
+                        href="{{ url_for(
+                            'download_document',
+                            document_id=document.id
+                        ) }}"
+                        class="btn"
+                    >
+                        ⬇ Download
+                    </a>
+
+
+
+                    {% if document.status == "Pending" %}
+
+
+                        <form
+                            action="{{ url_for(
+                                'approve_document',
+                                document_id=document.id
+                            ) }}"
+                            method="POST"
+                            style="
+                                display:inline;
+                                margin-left:10px;
+                            "
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn"
+                            >
+                                ✅ Approve
+                            </button>
+
+                        </form>
+
+
+                        <form
+                            action="{{ url_for(
+                                'reject_document',
+                                document_id=document.id
+                            ) }}"
+                            method="POST"
+                            style="
+                                display:inline;
+                                margin-left:10px;
+                            "
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn"
+                            >
+                                ❌ Reject
+                            </button>
+
+                        </form>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <p class="case-empty-state">
+                Enter a Client ID above to view that client's uploaded documents.
+            </p>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+    <section class="dashboard-section" data-portal-section="appointments">
+
+        <span class="dashboard-eyebrow">APPOINTMENT DIRECTORY</span>
+        <h2>Appointment Management</h2>
+        <p>Search for one appointment by Appointment ID to review and update it.</p>
+
+        <form class="client-search-form" method="GET" action="{{ url_for('admin_dashboard') }}">
+            <label for="appointment_search_id">Appointment ID</label>
+            <div class="client-search-controls">
+                <input type="search" id="appointment_search_id" name="appointment_id" value="{{ appointment_search }}" placeholder="e.g. 4" inputmode="numeric" required>
+                <button type="submit" class="btn">Search appointment</button>
+            </div>
+        </form>
+
+        {% if appointment_search_error %}
+            <div class="client-search-message is-error" role="alert">{{ appointment_search_error }}</div>
+        {% endif %}
+
+        {% if appointment_result %}
+            <article class="client-result appointment-result">
+                <div class="client-result-header">
+                    <div>
+                        <span class="client-id-label">APPOINTMENT ID {{ appointment_result.id }}</span>
+                        <strong>{{ appointment_result.subject or "Case consultation" }}</strong>
+                    </div>
+                    <span class="client-status">{{ appointment_result.status }}</span>
+                </div>
+                <div class="client-details-grid">
+                    <div><span>Scheduled for</span><strong>{{ appointment_result.scheduled_at }}</strong></div>
+                    <div><span>Case</span><strong>{{ appointment_result.case_number or "General consultation" }}</strong></div>
+                    <div><span>Client</span><strong>{{ appointment_result.client_name }}{% if appointment_result.client_public_id %} · {{ appointment_result.client_public_id }}{% endif %}</strong></div>
+                    <div><span>Lawyer</span><strong>{{ appointment_result.lawyer_name }}</strong></div>
+                </div>
+                {% if appointment_result.notes %}<p class="case-result-description">{{ appointment_result.notes }}</p>{% endif %}
+                <form action="{{ url_for('update_appointment_status', appointment_id=appointment_result.id) }}" method="POST" class="appointment-status-form">
+                    <label for="appointment_status"><strong>Update status</strong></label>
+                    <select id="appointment_status" name="status">
+                        {% for status in ["Requested", "Confirmed", "Cancelled", "Completed"] %}
+                            <option value="{{ status }}" {% if appointment_result.status == status %}selected{% endif %}>{{ status }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn">Update appointment</button>
+                </form>
+            </article>
+        {% else %}
+            <p class="case-empty-state">Enter an Appointment ID above to view and manage one appointment.</p>
+        {% endif %}
+    </section>
+
+
+    <section class="dashboard-section" data-portal-section="messages">
+
+        <h2>Case Messages</h2>
+        <p>Audit the firm’s case communication activity.</p>
+
+        {% for message in messages %}
+            <div class="case-item">
+                <strong>{{ message.case_number }} · {{ message.sender_name }} to {{ message.recipient_name }}</strong>
+                <p>{{ message.body }}</p>
+                <small>{{ message.created_at }}</small>
+            </div>
+        {% else %}
+            <p style="margin-top:20px;">No case messages yet.</p>
+        {% endfor %}
+    </section>
+
+
+</main>
+
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+
+</html>

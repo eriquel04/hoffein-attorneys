@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOFFEIN ATTORNEYS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body class="landing-page">
+<div class="topline">
+    <span>HOFFEIN ATTORNEYS</span>
+    <span>Private counsel for consequential decisions</span>
+    <a href="#contact">Dar es Salaam <span class="topline-arrow">↗</span></a>
+</div>
+
+<header class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="/" class="brand">
+            <img src="{{ url_for('static', filename='images/hoffein.png') }}" alt="Hoffein Attorneys Logo">
+            <div class="brand-text">
+                <strong>HOFFEIN ATTORNEYS</strong>
+                <span>LEGAL EXCELLENCE. TRUSTED ADVICE.</span>
+            </div>
+        </a>
+        <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false">
+            <span></span><span></span>
+        </button>
+        <nav class="site-nav">
+            <a href="#home" class="active">Home</a>
+            <a href="#about">Approach</a>
+            <a href="#practice">Capabilities</a>
+            <a href="#team">People</a>
+            <a href="#contact">Contact</a>
+            <a href="/login" class="login-btn">Client login</a>
+            <a href="/register" class="start-btn">Start a conversation <span>↗</span></a>
+        </nav>
+    </div>
+</header>
+
+<section class="hero" id="home">
+    <div class="hero-content">
+        <div class="hero-copy" data-reveal>
+            <span class="eyebrow"><i></i> Counsel with consequence</span>
+            <h1>Clarity when<br><em>it matters.</em></h1>
+            <p>Strategic legal guidance for people, families and organizations navigating decisions that shape what comes next.</p>
+            <div class="hero-buttons">
+                <a href="/register" class="primary-btn">Speak with our team <span>↗</span></a>
+                <a href="#practice" class="text-link">Explore our capabilities <span>↓</span></a>
+            </div>
+        </div>
+    </div>
+    <div class="hero-foot">
+        <span>Trusted advice. Deliberate action.</span>
+        <span class="scroll-note">Scroll to discover <b>↓</b></span>
+    </div>
+</section>
+
+<section class="features" id="about">
+    <div class="section-heading split-heading" data-reveal>
+        <div><span>OUR APPROACH</span><h2>Sound counsel for<br>decisions of consequence.</h2></div>
+        <p>We pair legal precision with commercial awareness and a disciplined understanding of the people behind every matter.</p>
+    </div>
+    <div class="approach-switcher" data-reveal>
+        <div class="approach-tabs" role="tablist" aria-label="Our approach">
+            <button class="approach-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="approach-panel-1" id="approach-tab-1" data-approach="1"><span>01</span> Understand the brief <b>↗</b></button>
+            <button class="approach-tab" type="button" role="tab" aria-selected="false" aria-controls="approach-panel-2" id="approach-tab-2" data-approach="2"><span>02</span> Define the strategy <b>↗</b></button>
+            <button class="approach-tab" type="button" role="tab" aria-selected="false" aria-controls="approach-panel-3" id="approach-tab-3" data-approach="3"><span>03</span> Deliver with discipline <b>↗</b></button>
+        </div>
+        <div class="approach-panels">
+            <article class="approach-panel is-active" role="tabpanel" tabindex="0" id="approach-panel-1" aria-labelledby="approach-tab-1" data-panel="1"><div class="feature-icon">↗</div><div><h3>Understand the brief</h3><p>We begin with the complete context: the facts, the priorities and the outcome you need to protect. That foundation allows us to advise with precision.</p></div></article>
+            <article class="approach-panel" role="tabpanel" tabindex="0" id="approach-panel-2" aria-labelledby="approach-tab-2" data-panel="2" hidden><div class="feature-icon">⌁</div><div><h3>Define the strategy</h3><p>We translate complexity into a practical course of action, identifying material risks, meaningful opportunities and the decisions that should come next.</p></div></article>
+            <article class="approach-panel" role="tabpanel" tabindex="0" id="approach-panel-3" aria-labelledby="approach-tab-3" data-panel="3" hidden><div class="feature-icon">□</div><div><h3>Deliver with discipline</h3><p>We keep your matter organized, responsive and moving forward, with clear communication from the first consultation through resolution.</p></div></article>
+        </div>
+    </div>
+</section>
+
+<section class="practice" id="practice">
+    <div class="section-heading practice-heading" data-reveal>
+        <span>CAPABILITIES</span><h2>Where we make<br><em>the difference.</em></h2>
+        <p>Focused expertise for matters that require sound judgment, careful preparation and a clear way forward.</p>
+    </div>
+    <div class="practice-grid">
+        <div class="practice-card" data-reveal><span>01 / DISPUTES</span><h3>Civil litigation</h3><p>Strategic representation grounded in the facts, the applicable law and the result that matters to you.</p><a href="/register">Discuss this capability <b>↗</b></a></div>
+        <div class="practice-card" data-reveal><span>02 / BUSINESS</span><h3>Corporate law</h3><p>Practical advice for organizations navigating commercial transactions, governance and growth.</p><a href="/register">Discuss this capability <b>↗</b></a></div>
+        <div class="practice-card" data-reveal><span>03 / PEOPLE</span><h3>Family law</h3><p>Measured guidance for personal matters where discretion, clarity and humanity are essential.</p><a href="/register">Discuss this capability <b>↗</b></a></div>
+        <div class="practice-card" data-reveal><span>04 / ASSETS</span><h3>Property law</h3><p>Careful counsel for transactions, ownership questions and disputes involving valuable assets.</p><a href="/register">Discuss this capability <b>↗</b></a></div>
+    </div>
+</section>
+
+<section class="team" id="team">
+    <div class="team-layout">
+        <div class="section-heading team-heading" data-reveal>
+            <span>THE PEOPLE BEHIND THE WORK</span><h2>Experienced counsel.<br><em>Measured judgment.</em></h2>
+        </div>
+        <div class="team-message" data-reveal>
+            <p>Our professionals bring technical depth, commercial perspective and a direct sense of responsibility to every client relationship.</p>
+            <a href="/register" class="text-link dark-link">Arrange a confidential consultation <span>↗</span></a>
+        </div>
+    </div>
+    <div class="team-rule"><span>HOFFEIN</span><span>LEGAL EXCELLENCE / TRUSTED ADVICE</span><span>EST. 2026</span></div>
+</section>
+
+<section class="cta">
+    <div><span>YOUR NEXT MOVE</span><h2>Let’s make it<br><em>considered.</em></h2></div>
+    <div class="cta-action"><p>Start with a confidential conversation about what is ahead.</p><a href="/register" class="primary-btn">Begin here <span>↗</span></a></div>
+</section>
+
+<footer id="contact">
+    <div class="footer-content">
+        <div class="footer-brand"><img class="footer-logo" src="{{ url_for('static', filename='images/hoffein.png') }}" alt="Hoffein Attorneys"><p>Clarity when it matters.</p></div>
+        <div><h4>Contact</h4><p>+255 XXX XXX XXX</p><p>info@hoffeinattorneys.com</p></div>
+        <div><h4>Visit</h4><p>Dar es Salaam, Tanzania</p><p>Mon - Fri / 08:00 - 17:00</p></div>
+    </div>
+    <div class="copyright">© 2026 HOFFEIN ATTORNEYS. All Rights Reserved.</div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

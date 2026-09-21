@@ -1,0 +1,7 @@
+Flask
+Werkzeug
+Authlib
+python-dotenv
+requests
+mysql-connector-python
+gunicorn

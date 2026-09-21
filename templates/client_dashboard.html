@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Client Dashboard | Hoffein Attorneys
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body class="portal-page" data-portal-role="client">
+
+
+<aside class="portal-sidebar">
+
+    <a href="{{ url_for('client_dashboard') }}" class="portal-brand">
+        <img src="{{ url_for('static', filename='images/hoffein.png') }}" alt="Hoffein Attorneys Logo">
+        <span class="portal-brand-name">HOFFEIN</span>
+        <span class="portal-brand-type">ATTORNEYS</span>
+        <span class="portal-motto">Clarity when it matters.</span>
+    </a>
+
+    <div class="portal-menu-label">Workspace</div>
+    <nav class="portal-menu" aria-label="Client workspace navigation">
+        <a class="is-active" href="#overview" data-portal-menu="overview"><span class="portal-menu-icon">⌂</span> Dashboard</a>
+        <a href="#cases" data-portal-menu="cases"><span class="portal-menu-icon">◇</span> Cases</a>
+        <a href="#documents" data-portal-menu="documents"><span class="portal-menu-icon">▣</span> Documents</a>
+        <a href="#appointments" data-portal-menu="appointments"><span class="portal-menu-icon">◷</span> Appointments</a>
+        <a href="#messages" data-portal-menu="messages"><span class="portal-menu-icon">✉</span> Messages</a>
+        <a href="{{ url_for('profile') }}"><span class="portal-menu-icon">○</span> Profile</a>
+    </nav>
+
+    <div class="portal-sidebar-footer">HOFFEIN ATTORNEYS<br><span>LEGAL EXCELLENCE / TRUSTED ADVICE</span></div>
+</aside>
+
+<header class="navbar portal-topbar">
+
+    <div class="nav-container">
+
+        <button class="portal-menu-toggle" type="button" aria-label="Toggle navigation">☰</button>
+        <div class="portal-search">⌕ <span>Search workspace</span></div>
+
+
+        <nav>
+            <a class="portal-profile" href="{{ url_for('profile') }}"><span>{{ user.name[:1]|upper }}</span>{{ user.name }}</a>
+            <a class="portal-logout" href="{{ url_for('logout') }}">
+                logout
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="dashboard-main">
+
+
+    <!-- ================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ================================================= -->
+
+    <div class="dashboard-header admin-dashboard-header client-dashboard-header">
+        <div>
+            <span class="dashboard-eyebrow">CLIENT PORTAL</span>
+            <h1 class="dashboard-title">Client workspace</h1>
+            <p class="dashboard-subtitle">Welcome, {{ user.name }}. Keep your matters, documents, and conversations in one place.</p>
+        </div>
+        {% if user.client_id %}
+        <div class="admin-header-note client-id-note">
+            <span>Your Client ID</span>
+            <strong>{{ user.client_id }}</strong>
+            <small>Use this ID when communicating with Hoffein Attorneys.</small>
+        </div>
+        {% endif %}
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- CLIENT OVERVIEW -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section client-overview-section" data-portal-section="overview">
+
+        <div class="client-overview-grid">
+            <div class="client-overview-main">
+                <span class="dashboard-eyebrow">CASE STATUS</span>
+                {% if primary_case %}
+                    <h2>{{ primary_case.title }}</h2>
+                    <p class="overview-case-number">Case No: {{ primary_case.case_number }}</p>
+
+                    {% set stages = ["Consultation", "Investigation", "Document Review", "Court Proceedings", "Resolution"] %}
+                    {% set status_stage = {"Pending": 0, "Active": 2, "In Progress": 2, "Completed": 4, "Closed": 4} %}
+                    {% set current_stage = status_stage.get(primary_case.status, 0) %}
+
+                    <div class="case-progress" aria-label="Case progress">
+                        {% for stage in stages %}
+                            <div class="progress-step {% if loop.index0 <= current_stage %}is-complete{% endif %} {% if loop.index0 == current_stage %}is-current{% endif %}">
+                                <span class="progress-dot">{% if loop.index0 < current_stage %}✓{% else %}{{ loop.index }}{% endif %}</span>
+                                <span>{{ stage }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <p class="current-stage">Current stage: <strong>{{ stages[current_stage] }}</strong></p>
+                {% else %}
+                    <h2>Your case workspace is ready when you are.</h2>
+                    <p class="portal-empty">A case will appear here once the firm assigns one to your account.</p>
+                {% endif %}
+            </div>
+
+            <aside class="client-overview-side">
+                <span class="dashboard-eyebrow">YOUR LEGAL TEAM</span>
+                {% if primary_case and primary_case.lawyer_name %}
+                    <strong>{{ primary_case.lawyer_name }}</strong>
+                    <span>Assigned advocate</span>
+                    <a href="#messages" class="dashboard-card-action" data-portal-menu-trigger="messages">Message your team <span>↗</span></a>
+                {% else %}
+                    <p class="portal-empty">Your advocate will appear here when assigned.</p>
+                {% endif %}
+            </aside>
+        </div>
+
+        {% if pending_requests %}
+            <div class="client-action-panel">
+                <div>
+                    <span class="dashboard-eyebrow">ACTION REQUIRED</span>
+                    <strong>{{ pending_requests[0].title }}</strong>
+                    <p>{{ pending_requests[0].instructions or "Please upload this document for review." }}</p>
+                </div>
+                <a href="#documents" class="btn" data-portal-menu-trigger="documents">Review request</a>
+            </div>
+        {% endif %}
+
+        <div class="client-overview-lower">
+            <div>
+                <span class="dashboard-eyebrow">UPCOMING</span>
+                {% if next_appointment %}
+                    <div class="overview-list-item"><strong>{{ next_appointment.scheduled_at }}</strong><span>{{ next_appointment.case_title }} with {{ next_appointment.lawyer_name }}</span></div>
+                {% else %}
+                    <p class="portal-empty">No upcoming appointments.</p>
+                {% endif %}
+            </div>
+            <div>
+                <span class="dashboard-eyebrow">RECENT ACTIVITY</span>
+                {% if recent_activity %}
+                    {% for activity in recent_activity[:3] %}
+                        <div class="overview-list-item"><strong>{{ activity.label }}</strong><span>{{ activity.text }}</span></div>
+                    {% endfor %}
+                {% else %}
+                    <p class="portal-empty">Your recent activity will appear here.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="dashboard-section intake-request-section" data-portal-section="overview">
+        <div class="section-heading-row">
+            <div>
+                <span class="dashboard-eyebrow">FIRM INTAKE</span>
+                <h2>Request Legal Service</h2>
+            </div>
+            {% if service_requests %}<span class="section-count">{{ service_requests|length }} request{% if service_requests|length != 1 %}s{% endif %}</span>{% endif %}
+        </div>
+        <p>Tell us what you need help with. The firm will review your information before creating an official matter.</p>
+        <form action="{{ url_for('request_legal_service') }}" method="POST" enctype="multipart/form-data" class="intake-request-form">
+            <textarea name="problem" rows="5" required placeholder="Describe the legal issue, what happened, and what outcome you need." aria-label="Describe your legal issue"></textarea>
+            <div class="intake-form-row">
+                <select name="practice_area" required aria-label="Practice area">
+                    <option value="">-- Practice area --</option>
+                    <option>Civil Litigation</option><option>Corporate and Commercial</option><option>Family Law</option><option>Property Law</option><option>Employment Law</option><option>Criminal Law</option><option>Other</option>
+                </select>
+                <select name="urgency" required aria-label="Urgency">
+                    <option value="Normal">Normal urgency</option><option value="Urgent">Urgent</option><option value="Time-sensitive">Time-sensitive</option>
+                </select>
+            </div>
+            <input type="file" name="attachment" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" aria-label="Relevant document">
+            <small>Optional: attach a relevant document. Maximum 10 MB.</small>
+            <button type="submit" class="btn">Submit legal service request</button>
+        </form>
+        {% if service_requests %}
+            <div class="intake-history"><span class="dashboard-eyebrow">REQUEST HISTORY</span>{% for service_request in service_requests[:3] %}<div class="intake-history-item"><strong>#{{ service_request.id }} · {{ service_request.practice_area }}</strong><span>{{ service_request.status }} · {{ service_request.created_at }}</span></div>{% endfor %}</div>
+        {% endif %}
+    </section>
+
+    <!-- ================================================= -->
+    <!-- DASHBOARD CARDS -->
+    <!-- ================================================= -->
+
+    <div class="practice-grid dashboard-cards portal-summary">
+
+
+        <div class="practice-card">
+
+            <span>
+                01
+            </span>
+
+            <h3>
+                My Cases
+            </h3>
+
+            <p>
+                {{ cases|length }} matter{% if cases|length != 1 %}s{% endif %} on your account.
+            </p>
+
+        </div>
+
+
+        <div class="practice-card">
+
+            <span>
+                02
+            </span>
+
+            <h3>
+                Documents
+            </h3>
+
+            <p>
+                {{ documents|length }} document{% if documents|length != 1 %}s{% endif %} connected to your matters.
+            </p>
+            <a href="#documents" class="dashboard-card-action" data-portal-menu-trigger="documents">Upload a document <span>↗</span></a>
+
+        </div>
+
+
+        <div class="practice-card">
+
+            <span>
+                03
+            </span>
+
+            <h3>
+                Appointments
+            </h3>
+
+            <p>
+                {{ appointments|length }} appointment{% if appointments|length != 1 %}s{% endif %} scheduled or requested.
+            </p>
+
+        </div>
+
+
+        <div class="practice-card">
+
+            <span>
+                04
+            </span>
+
+            <h3>
+                Messages
+            </h3>
+
+            <p>
+                {{ messages|length }} message{% if messages|length != 1 %}s{% endif %} in your case conversations.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- MY CASES -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section" data-portal-section="cases">
+
+        <div class="section-heading-row">
+            <div>
+                <span class="dashboard-eyebrow">MATTERS</span>
+                <h2>My Cases</h2>
+            </div>
+            <span class="section-count">{{ cases|length }} matter{% if cases|length != 1 %}s{% endif %}</span>
+        </div>
+
+
+        {% if cases %}
+
+
+            {% for case in cases %}
+
+
+                <article class="client-case-card">
+                    {% set case_stage = {"Pending": "Consultation", "Active": "Document Review", "In Progress": "Document Review", "Completed": "Resolution", "Closed": "Resolution"}.get(case.status, "Consultation") %}
+                    <div class="client-case-card-header">
+                        <div>
+                            <span class="case-number-label">CASE NO. {{ case.case_number }}</span>
+                            <h3>{{ case.title }}</h3>
+                        </div>
+                        <span class="case-status-pill">{{ case.status }}</span>
+                    </div>
+
+                    <div class="client-case-meta">
+                        <div><span>Current stage</span><strong>{{ case_stage }}</strong></div>
+                        <div><span>Advocate</span><strong>{{ case.lawyer_name or "Not assigned" }}</strong></div>
+                        <div><span>Opened</span><strong>{{ case.created_at }}</strong></div>
+                    </div>
+
+                    {% if case.description %}
+                        <p class="client-case-description">{{ case.description }}</p>
+                    {% endif %}
+
+                    <div class="client-case-actions">
+                        <a href="#documents" data-portal-menu-trigger="documents">Documents <span>↗</span></a>
+                        <a href="#appointments" data-portal-menu-trigger="appointments">Appointments <span>↗</span></a>
+                        <a href="#messages" data-portal-menu-trigger="messages">Messages <span>↗</span></a>
+                    </div>
+
+
+                </article>
+
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <p>
+                No cases have been assigned to you yet.
+            </p>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- UPLOAD DOCUMENT -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section" data-portal-section="documents">
+
+
+        <h2>
+            Upload Documents
+        </h2>
+
+
+        <p>
+            Upload documents related to one of your legal cases.
+            All uploaded documents will be reviewed by the administrator.
+        </p>
+
+
+        {% if cases %}
+
+
+            <form
+                action="{{ url_for('upload_document') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                style="margin-top:20px;"
+            >
+
+                {% set pending_requests = document_requests|selectattr('status', 'equalto', 'Pending')|list %}
+                {% if pending_requests %}
+                <div class="requested-documents-panel">
+                    <span class="dashboard-eyebrow">REQUESTED DOCUMENTS</span>
+                    <p>Select a request to attach this upload to it, or leave it as a general case document.</p>
+                    <select name="request_id" id="request_id" aria-label="Requested document">
+                        <option value="">-- General case document --</option>
+                        {% for document_request in pending_requests %}
+                            <option value="{{ document_request.id }}" data-case-id="{{ document_request.case_id }}">
+                                {{ document_request.title }} - {{ document_request.case_number }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% for document_request in pending_requests %}
+                        {% if document_request.instructions %}
+                            <small>{{ document_request.title }}: {{ document_request.instructions }}</small>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+
+                <!-- CASE SELECTION -->
+
+                <div style="margin-bottom:15px;">
+
+                    <label for="case_id">
+
+                        <strong>
+                            Select Case
+                        </strong>
+
+                    </label>
+
+
+                    <select
+                        name="case_id"
+                        id="case_id"
+                        required
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:6px;
+                        "
+                    >
+
+
+                        <option value="">
+                            -- Select your case --
+                        </option>
+
+
+                        {% for case in cases %}
+
+
+                            <option value="{{ case.id }}">
+
+                                {{ case.case_number }}
+                                -
+                                {{ case.title }}
+
+                            </option>
+
+
+                        {% endfor %}
+
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DOCUMENT TYPE -->
+
+                <div style="margin-bottom:15px;">
+
+                    <label for="document_type">
+
+                        <strong>
+                            Document Type
+                        </strong>
+
+                    </label>
+
+
+                    <select
+                        name="document_type"
+                        id="document_type"
+                        required
+                        style="
+                            width:100%;
+                            padding:10px;
+                            margin-top:6px;
+                        "
+                    >
+
+
+                        <option value="">
+                            -- Select document type --
+                        </option>
+
+
+                        <option value="Identification">
+                            Identification
+                        </option>
+
+
+                        <option value="Evidence">
+                            Evidence
+                        </option>
+
+
+                        <option value="Court Document">
+                            Court Document
+                        </option>
+
+
+                        <option value="Business License">
+                            Business License
+                        </option>
+
+
+                        <option value="Application">
+                            Application
+                        </option>
+
+
+                        <option value="Contract">
+                            Contract
+                        </option>
+
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- FILE SELECTION -->
+
+                <div style="margin-bottom:15px;">
+
+                    <label for="document">
+
+                        <strong>
+                            Select Document
+                        </strong>
+
+                    </label>
+
+
+                    <input
+                        type="file"
+                        name="document"
+                        id="document"
+                        accept="
+                            .pdf,
+                            .png,
+                            .jpg,
+                            .jpeg,
+                            .doc,
+                            .docx
+                        "
+                        required
+                        style="
+                            display:block;
+                            margin-top:8px;
+                        "
+                    >
+
+
+                    <small>
+
+                        Allowed files:
+                        PDF, PNG, JPG, JPEG, DOC and DOCX.
+
+                        Maximum size:
+                        10 MB.
+
+                    </small>
+
+                </div>
+
+
+
+                <!-- BROWSER UPLOAD FLAG -->
+
+                <input
+                    type="hidden"
+                    name="browser_upload"
+                    value="true"
+                >
+
+
+
+                <!-- UPLOAD BUTTON -->
+
+                <button
+                    type="submit"
+                    class="btn"
+                >
+
+                    📤 Upload Document
+
+                </button>
+
+
+            </form>
+
+
+        {% else %}
+
+
+            <p>
+
+                You do not have a case yet.
+
+                A case must be assigned to your account
+                before you can upload documents.
+
+            </p>
+
+            <span class="upload-disabled-note">Upload becomes available after a case is assigned.</span>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- ================================================= -->
+    <!-- MY DOCUMENTS -->
+    <!-- ================================================= -->
+
+    <section class="dashboard-section" data-portal-section="documents">
+
+
+        <div class="section-heading-row">
+            <div>
+                <span class="dashboard-eyebrow">SECURE LIBRARY</span>
+                <h2>Received Documents</h2>
+            </div>
+            <span class="section-count">{{ documents|length }} file{% if documents|length != 1 %}s{% endif %}</span>
+        </div>
+
+        {% if documents %}
+        <div class="document-filter-bar" role="toolbar" aria-label="Filter documents">
+            <button type="button" class="document-filter is-active" data-document-filter="all">All</button>
+            <button type="button" class="document-filter" data-document-filter="Pending">Pending</button>
+            <button type="button" class="document-filter" data-document-filter="Approved">Approved</button>
+            <button type="button" class="document-filter" data-document-filter="Rejected">Rejected</button>
+        </div>
+        {% endif %}
+
+
+        {% if documents %}
+
+
+            {% for document in documents %}
+
+
+                <article class="document-card" data-document-status="{{ document.status }}">
+
+                    <div class="document-card-header">
+                        <div>
+                            <span class="document-type-label">{{ document.document_type }}</span>
+                            <strong>📄 {{ document.original_filename }}</strong>
+                        </div>
+                        <span class="document-status-pill document-status-{{ document.status|lower }}">{{ document.status }}</span>
+                    </div>
+
+
+
+                    <div class="document-card-meta">
+                        <span>Case: <strong>{{ document.case_number }} - {{ document.case_title }}</strong></span>
+                        <span>Uploaded by <strong>{{ document.uploader_name }}</strong></span>
+                        <span>{{ document.uploaded_at }}</span>
+                    </div>
+
+
+                    <div class="document-card-footer">
+                        {% if document.status == "Approved" %}
+                            <a href="{{ url_for('download_document', document_id=document.id) }}" class="btn">⬇ Download</a>
+                        {% elif document.status == "Pending" %}
+                            <span class="document-note">Awaiting administrator approval.</span>
+                        {% elif document.status == "Rejected" %}
+                            <span class="document-note is-rejected">This document was rejected.</span>
+                        {% endif %}
+                    </div>
+                </article>
+
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <p>
+
+                No documents are currently available
+                for your cases.
+
+            </p>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <section class="dashboard-section" data-portal-section="appointments">
+
+        <div class="section-heading-row">
+            <div>
+                <span class="dashboard-eyebrow">CALENDAR & IMPORTANT DATES</span>
+                <h2>Appointments</h2>
+            </div>
+            <span class="section-count">{{ appointments|length }} date{% if appointments|length != 1 %}s{% endif %}</span>
+        </div>
+        <p>Request a consultation and keep track of meetings connected to your matters.</p>
+
+        {% if cases %}
+            <div class="appointment-request-panel">
+                <span class="dashboard-eyebrow">REQUEST A CONSULTATION</span>
+                <form action="{{ url_for('request_appointment') }}" method="POST" class="appointment-request-form">
+                <select name="case_id" required aria-label="Case for appointment">
+                    <option value="">-- Select case --</option>
+                    {% for case in cases %}
+                        <option value="{{ case.id }}">{{ case.case_number }} - {{ case.title }}</option>
+                    {% endfor %}
+                </select>
+                <select name="lawyer_id" required aria-label="Preferred lawyer">
+                    <option value="">-- Select preferred lawyer --</option>
+                    {% for lawyer in lawyers %}
+                        <option value="{{ lawyer.id }}">
+                            {{ lawyer.full_name }}{% if lawyer.specialization %} - {{ lawyer.specialization }}{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+                <input type="datetime-local" name="scheduled_at" required aria-label="Preferred date and time">
+                <textarea name="notes" rows="3" placeholder="Briefly describe the purpose of the consultation." aria-label="Appointment notes"></textarea>
+                <button type="submit" class="btn">Request Appointment</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="portal-empty">Appointments will become available once a case is assigned to your account.</p>
+        {% endif %}
+
+        {% for appointment in appointments %}
+            <article class="appointment-card">
+                <div class="appointment-date-block">
+                    <span>{{ appointment.scheduled_at.strftime('%d') if appointment.scheduled_at.strftime is defined else appointment.scheduled_at }}</span>
+                    <small>DATE</small>
+                </div>
+                <div class="appointment-card-content">
+                    <div class="appointment-card-header">
+                        <div>
+                            <span class="message-case-label">{{ appointment.case_number or "Consultation" }}</span>
+                            <strong>{{ appointment.case_title or "Legal consultation" }}</strong>
+                        </div>
+                        <span class="appointment-status appointment-status-{{ appointment.status|lower }}">{{ appointment.status }}</span>
+                    </div>
+                    <p>{{ appointment.scheduled_at }} with {{ appointment.lawyer_name }}</p>
+                    {% if appointment.notes %}<span class="appointment-notes">{{ appointment.notes }}</span>{% endif %}
+                </div>
+            </article>
+        {% else %}
+            <p class="portal-empty">No appointments have been requested yet.</p>
+        {% endfor %}
+    </section>
+
+    <section class="dashboard-section" data-portal-section="messages">
+
+        <div class="section-heading-row">
+            <div>
+                <span class="dashboard-eyebrow">SECURE COMMUNICATION</span>
+                <h2>Messages</h2>
+            </div>
+            <span class="section-count">{{ messages|length }} message{% if messages|length != 1 %}s{% endif %}</span>
+        </div>
+        <p>Keep communication with your legal team connected to the relevant case.</p>
+
+        {% if cases %}
+            <div class="message-compose-panel">
+                <span class="dashboard-eyebrow">NEW MESSAGE</span>
+                <p>Choose the matter this message belongs to so your legal team has the right context.</p>
+                <form action="{{ url_for('send_message') }}" method="POST" class="message-compose-form">
+                <select name="case_id" required aria-label="Case for message">
+                    <option value="">-- Select case --</option>
+                    {% for case in cases %}
+                        <option value="{{ case.id }}">{{ case.case_number }} - {{ case.title }}</option>
+                    {% endfor %}
+                </select>
+                <textarea name="body" rows="4" required placeholder="Write a message to your lawyer." aria-label="Message body"></textarea>
+                <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="portal-empty">Messages will become available once a case and legal representative are assigned.</p>
+        {% endif %}
+
+        {% for message in messages %}
+            <article class="message-card {% if message.sender_id == user.id %}is-sent{% endif %}">
+                <div class="message-card-header">
+                    <div>
+                        <span class="message-case-label">{{ message.case_number or "Case conversation" }}</span>
+                        <strong>{{ message.sender_name }}</strong>
+                    </div>
+                    <small>{{ message.created_at }}</small>
+                </div>
+                <p>{{ message.body }}</p>
+                <span class="message-direction">{% if message.sender_id == user.id %}Sent to {{ message.recipient_name }}{% else %}Received from {{ message.sender_name }}{% endif %}</span>
+            </article>
+        {% else %}
+            <p class="portal-empty">No messages have been exchanged yet.</p>
+        {% endfor %}
+    </section>
+
+</main>
+
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+
+</html>
+

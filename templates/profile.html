@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Hoffein Attorneys</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="portal-page profile-page">
+<header class="navbar">
+    <div class="nav-container">
+        <a href="/" class="brand">
+            <img src="{{ url_for('static', filename='images/hoffein.png') }}" alt="Hoffein Attorneys Logo">
+            <div class="brand-text">
+                <strong>HOFFEIN ATTORNEYS</strong>
+                <span>ACCOUNT PROFILE</span>
+            </div>
+        </a>
+        <nav>
+            <a href="{{ url_for(user['role'] + '_dashboard') }}">Workspace</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </div>
+</header>
+
+<main class="dashboard-main profile-main">
+    <div class="profile-header">
+        <div>
+            <span class="profile-eyebrow">ACCOUNT PROFILE</span>
+            <h1 class="dashboard-title">Your profile</h1>
+            <p class="dashboard-subtitle">Keep your contact information current for clear, timely communication.</p>
+        </div>
+        <div class="profile-avatar">{{ profile_user.full_name[:1]|upper }}</div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="profile-notice">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if error %}<div class="error-message">{{ error }}</div>{% endif %}
+
+    <section class="dashboard-section profile-card">
+        <div class="profile-card-heading">
+            <div>
+                <span class="profile-eyebrow">PERSONAL DETAILS</span>
+                <h2>Account information</h2>
+            </div>
+            <span class="profile-status">{{ profile_user.role|capitalize }}</span>
+        </div>
+
+        <form method="POST" action="{{ url_for('profile') }}" class="profile-form">
+            <div class="profile-field">
+                <label for="full_name">Full name</label>
+                <input id="full_name" name="full_name" type="text" value="{{ profile_user.full_name }}" required autocomplete="name">
+            </div>
+            <div class="profile-field">
+                <label for="phone">Telephone number</label>
+                <input id="phone" name="phone" type="tel" value="{{ profile_user.phone or '' }}" placeholder="e.g. +255 700 000 000" autocomplete="tel">
+                <small>Used for important account and case communication.</small>
+            </div>
+            <div class="profile-field profile-readonly">
+                <label for="email">Email address</label>
+                <input id="email" type="email" value="{{ profile_user.email }}" readonly>
+                <small>Email changes are managed by the firm administrator.</small>
+            </div>
+            <div class="profile-actions">
+                <a href="{{ url_for(user['role'] + '_dashboard') }}" class="profile-cancel">Return to workspace</a>
+                <button type="submit" class="btn">Save profile</button>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

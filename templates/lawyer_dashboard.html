@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>
+    Lawyer Dashboard | Hoffein Attorneys
+</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+```
+
+</head>
+
+<body class="portal-page" data-portal-role="lawyer">
+
+<aside class="portal-sidebar">
+
+    <a href="{{ url_for('lawyer_dashboard') }}" class="portal-brand">
+        <img src="{{ url_for('static', filename='images/hoffein.png') }}" alt="Hoffein Attorneys Logo">
+        <span class="portal-brand-name">HOFFEIN</span>
+        <span class="portal-brand-type">ATTORNEYS</span>
+        <span class="portal-motto">Clarity when it matters.</span>
+    </a>
+
+    <div class="portal-menu-label">Workspace</div>
+    <nav class="portal-menu" aria-label="Lawyer workspace navigation">
+        <a class="is-active" href="#overview" data-portal-menu="overview"><span class="portal-menu-icon">⌂</span> Dashboard</a>
+        <a href="#cases" data-portal-menu="cases"><span class="portal-menu-icon">◇</span> Cases</a>
+        <a href="#documents" data-portal-menu="documents"><span class="portal-menu-icon">▣</span> Documents</a>
+        <a href="#appointments" data-portal-menu="appointments"><span class="portal-menu-icon">◷</span> Appointments</a>
+        <a href="#messages" data-portal-menu="messages"><span class="portal-menu-icon">✉</span> Messages</a>
+        <a href="{{ url_for('profile') }}"><span class="portal-menu-icon">○</span> Profile</a>
+    </nav>
+
+    <div class="portal-sidebar-footer">HOFFEIN ATTORNEYS<br><span>LEGAL EXCELLENCE / TRUSTED ADVICE</span></div>
+</aside>
+
+<header class="navbar portal-topbar">
+
+```
+<div class="nav-container">
+
+
+        <button class="portal-menu-toggle" type="button" aria-label="Toggle navigation">☰</button>
+        <div class="portal-search">⌕ <span>Search workspace</span></div>
+
+
+    <nav>
+
+            <a class="portal-profile" href="{{ url_for('profile') }}"><span>{{ user.name[:1]|upper }}</span>{{ user.name }}</a>
+        <a class="portal-logout" href="{{ url_for('logout') }}">
+            logout
+        </a>
+
+    </nav>
+
+
+</div>
+```
+
+</header>
+
+<main class="dashboard-main">
+
+```
+<!-- ================================================= -->
+<!-- HEADER -->
+<!-- ================================================= -->
+
+<p class="dashboard-subtitle">
+    Welcome, {{ user.name }}
+</p>
+
+
+<!-- ================================================= -->
+<!-- SUMMARY CARDS -->
+<!-- ================================================= -->
+
+<div class="practice-grid dashboard-cards portal-summary">
+
+
+    <div class="practice-card">
+
+        <span>
+            01
+        </span>
+
+        <h3>
+            Assigned Cases
+        </h3>
+
+        <p>
+            View and manage your assigned cases.
+        </p>
+
+    </div>
+
+
+    <div class="practice-card">
+
+        <span>
+            02
+        </span>
+
+        <h3>
+            Clients
+        </h3>
+
+        <p>
+            View clients assigned to your cases.
+        </p>
+
+    </div>
+
+
+    <div class="practice-card">
+
+        <span>
+            03
+        </span>
+
+        <h3>
+            Documents
+        </h3>
+
+        <p>
+            Manage documents related to your cases.
+        </p>
+
+    </div>
+
+
+    <div class="practice-card">
+
+        <span>
+            04
+        </span>
+
+        <h3>
+            Messages
+        </h3>
+
+        <p>
+            Communicate with your clients.
+        </p>
+
+    </div>
+
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- ASSIGNED CASES -->
+<!-- ================================================= -->
+
+<section class="dashboard-section">
+
+
+    <h2>
+        Assigned Cases
+    </h2>
+
+
+    {% if cases %}
+
+
+        {% for case in cases %}
+
+
+            <div class="case-item">
+
+
+                <strong>
+                    {{ case.case_number }}
+                </strong>
+
+
+                <p>
+
+                    <strong>
+                        Case Title:
+                    </strong>
+
+                    {{ case.title }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Client:
+                    </strong>
+
+                    {{ case.client_name }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Status:
+                    </strong>
+
+                    {{ case.status }}
+
+                </p>
+
+
+                {% if case.description %}
+
+                    <p>
+
+                        <strong>
+                            Description:
+                        </strong>
+
+                        {{ case.description }}
+
+                    </p>
+
+                {% endif %}
+
+
+                <p>
+
+                    <strong>
+                        Created:
+                    </strong>
+
+                    {{ case.created_at }}
+
+                </p>
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <p>
+            No cases are currently assigned to you.
+        </p>
+
+
+    {% endif %}
+
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- CASE DOCUMENTS -->
+<!-- ================================================= -->
+
+<section class="dashboard-section">
+
+
+    <h2>
+        Received Documents
+    </h2>
+
+
+    {% if documents %}
+
+
+        {% for document in documents %}
+
+
+            <div class="case-item"
+                 style="margin-bottom:20px;">
+
+
+                <strong>
+
+                    📄
+                    {{ document.original_filename }}
+
+                </strong>
+
+
+                <p>
+
+                    <strong>
+                        Case:
+                    </strong>
+
+                    {{ document.case_number }}
+
+                    -
+                    {{ document.case_title }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Client:
+                    </strong>
+
+                    {{ document.client_name }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Document Type:
+                    </strong>
+
+                    {{ document.document_type }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Uploaded By:
+                    </strong>
+
+                    {{ document.uploader_name }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Status:
+                    </strong>
+
+                    {{ document.status }}
+
+                </p>
+
+
+                <p>
+
+                    <strong>
+                        Uploaded:
+                    </strong>
+
+                    {{ document.uploaded_at }}
+
+                </p>
+
+
+                <a
+                    href="{{ url_for(
+                        'download_document',
+                        document_id=document.id
+                    ) }}"
+                    class="btn"
+                >
+
+                    ⬇ Download Document
+
+                </a>
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <p>
+            No documents are currently available
+            for your assigned cases.
+        </p>
+
+
+    {% endif %}
+
+
+</section>
+
+
+<section class="dashboard-section">
+
+    <h2>Appointments</h2>
+    <p>Review consultation requests and keep your schedule current.</p>
+
+    {% for appointment in appointments %}
+        <div class="case-item">
+            <strong>{{ appointment.case_number }} - {{ appointment.case_title }}</strong>
+            <p>Client: {{ appointment.client_name }}</p>
+            <p>{{ appointment.scheduled_at }} · {{ appointment.status }}</p>
+            {% if appointment.notes %}<p>{{ appointment.notes }}</p>{% endif %}
+            <form action="{{ url_for('update_appointment_status', appointment_id=appointment.id) }}" method="POST" style="margin-top:12px;">
+                <select name="status" style="padding:8px;">
+                    {% for status in ["Requested", "Confirmed", "Cancelled", "Completed"] %}
+                        <option value="{{ status }}" {% if appointment.status == status %}selected{% endif %}>{{ status }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn">Update</button>
+            </form>
+        </div>
+    {% else %}
+        <p style="margin-top:20px;">No appointment requests yet.</p>
+    {% endfor %}
+</section>
+
+<section class="dashboard-section">
+
+    <h2>Case Messages</h2>
+    <p>Communicate directly with clients from their case record.</p>
+
+    {% if cases %}
+        <form action="{{ url_for('send_message') }}" method="POST" style="margin-top:20px;">
+            <select name="case_id" required style="padding:10px; width:100%; margin-bottom:12px;">
+                <option value="">-- Select case --</option>
+                {% for case in cases %}
+                    <option value="{{ case.id }}">{{ case.case_number }} - {{ case.title }}</option>
+                {% endfor %}
+            </select>
+            <textarea name="body" rows="4" required placeholder="Write a message to your client..." style="padding:10px; width:100%; margin-bottom:12px;"></textarea>
+            <button type="submit" class="btn">Send Message</button>
+        </form>
+    {% endif %}
+
+    {% for message in messages %}
+        <div class="case-item">
+            <strong>{{ message.case_number }} · {{ message.sender_name }}</strong>
+            <p>{{ message.body }}</p>
+            <small>{{ message.created_at }}</small>
+        </div>
+    {% else %}
+        <p style="margin-top:20px;">No messages yet.</p>
+    {% endfor %}
+</section>
+
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+
+</html>

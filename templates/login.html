@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sign In | Hoffein Attorneys</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <meta name="description"
+          content="Secure client and legal professional login portal for Hoffein Attorneys">
+</head>
+
+<body class="auth-page">
+
+    <main class="auth-container">
+
+        <!-- LEFT SIDE / BRANDING -->
+        <section class="auth-showcase">
+
+            <div class="showcase-overlay"></div>
+
+            <div class="showcase-content">
+
+                <img
+                    src="{{ url_for('static', filename='images/hoffein.png') }}"
+                    class="showcase-logo"
+                    alt="Hoffein Attorneys Logo"
+                >
+
+                <div class="showcase-text">
+                    <span class="showcase-label">HOFFEIN ATTORNEYS</span>
+
+                    <h1>
+                        Trusted Legal<br>
+                        Representation.
+                    </h1>
+
+                    <p>
+                        Securely access your legal matters, communicate
+                        with your legal team, and stay informed about
+                        your case.
+                    </p>
+                </div>
+
+                <div class="trust-items">
+
+                    <div class="trust-item">
+                        <span class="trust-icon">✓</span>
+                        <span>Secure Client Portal</span>
+                    </div>
+
+                    <div class="trust-item">
+                        <span class="trust-icon">✓</span>
+                        <span>Professional Legal Services</span>
+                    </div>
+
+                    <div class="trust-item">
+                        <span class="trust-icon">✓</span>
+                        <span>Your Information Is Protected</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT SIDE / LOGIN -->
+        <section class="auth-form-section">
+
+            <div class="auth-box">
+
+                <!-- MOBILE LOGO -->
+                <div class="mobile-brand">
+                    <img
+                        src="{{ url_for('static', filename='images/hoffein.png') }}"
+                        alt="Hoffein Attorneys"
+                        class="mobile-logo"
+                    >
+                </div>
+
+
+                <!-- HEADER -->
+                <div class="login-header">
+
+                    <span class="welcome-label">
+                        WELCOME BACK
+                    </span>
+
+                    <h2>
+                        Sign in to your account
+                    </h2>
+
+                    <p>
+                        Access your Hoffein Attorneys portal securely.
+                    </p>
+
+                </div>
+
+
+                <!-- ERROR MESSAGE -->
+                {% if error %}
+                <div class="error-message" role="alert">
+
+                    <span class="error-icon">!</span>
+
+                    <div>
+                        {{ error }}
+                    </div>
+
+                </div>
+                {% endif %}
+
+                {% if success %}
+                <div class="success-message" role="status">
+                    {{ success }}
+                </div>
+                {% endif %}
+
+
+                <!-- LOGIN FORM -->
+                <form
+                    method="POST"
+                    action="{{ url_for('login') }}"
+                    class="login-form"
+                >
+
+                    <a
+                        href="{{ url_for('google_login') }}"
+                        class="google-button"
+                    >
+                        <span class="google-mark" aria-hidden="true">G</span>
+                        <span>Continue with Google</span>
+                    </a>
+
+                    <div class="form-divider" aria-hidden="true">
+                        <span>or continue with email</span>
+                    </div>
+
+                    <!-- EMAIL / PHONE -->
+                    <div class="input-group">
+
+                        <label for="login_identifier">
+                            Email or Phone Number
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                    <path
+                                        d="M22 6L12 13L2 6"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </span>
+
+                            <input
+                                type="text"
+                                id="login_identifier"
+                                name="identifier"
+                                placeholder="Email address or phone number"
+                                autocomplete="username"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+                    <div class="input-group">
+
+                        <div class="password-label-row">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <a
+                                href="#"
+                                class="forgot-password"
+                                onclick="return false;"
+                            >
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    aria-hidden="true"
+                                >
+                                    <rect
+                                        x="3"
+                                        y="11"
+                                        width="18"
+                                        height="10"
+                                        rx="2"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                    />
+
+                                    <path
+                                        d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7V11"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                    />
+
+                                </svg>
+
+                            </span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="passwordToggle"
+                                aria-label="Show password"
+                            >
+
+                                <svg
+                                    id="eyeIcon"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="3"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                    />
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REMEMBER ME -->
+                    <div class="login-options">
+
+                        <label class="remember-me">
+
+                            <input
+                                type="checkbox"
+                                name="remember"
+                                value="1"
+                            >
+
+                            <span class="custom-checkbox"></span>
+
+                            <span>
+                                Remember me
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- LOGIN BUTTON -->
+                    <button
+                        type="submit"
+                        class="auth-button"
+                        id="loginButton"
+                    >
+
+                        <span id="buttonText">
+                            Sign In
+                        </span>
+
+                        <span
+                            class="button-spinner"
+                            id="buttonSpinner"
+                            aria-hidden="true"
+                        ></span>
+
+                        <svg
+                            class="button-arrow"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M5 12H19"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                            />
+
+                            <path
+                                d="M13 6L19 12L13 18"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+
+                    </button>
+
+                </form>
+
+
+                <!-- CREATE ACCOUNT -->
+                <div class="register-section">
+
+                    <span>
+                        Don't have an account?
+                    </span>
+
+                    <a href="{{ url_for('register') }}">
+                        Create an account
+                    </a>
+
+                </div>
+
+
+                <!-- SECURITY NOTICE -->
+                <div class="security-notice">
+
+                    <span class="security-icon">
+
+                        <svg
+                            width="17"
+                            height="17"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+
+                            <path
+                                d="M9 12L11 14L15 10"
+                                stroke="currentColor"
+                                stroke-width="1.8"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+
+                    </span>
+
+                    <span>
+                        Your connection and account information are
+                        protected.
+                    </span>
+
+                </div>
+
+
+                <!-- BACK TO WEBSITE -->
+                <a
+                    href="{{ url_for('home') }}"
+                    class="back-home"
+                >
+                    <span>←</span>
+                    Back to website
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- PASSWORD VISIBILITY + LOGIN LOADING -->
+    <script>
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const passwordToggle =
+            document.getElementById("passwordToggle");
+
+        const eyeIcon =
+            document.getElementById("eyeIcon");
+
+        const loginForm =
+            document.querySelector(".login-form");
+
+        const loginButton =
+            document.getElementById("loginButton");
+
+        const buttonText =
+            document.getElementById("buttonText");
+
+        const buttonSpinner =
+            document.getElementById("buttonSpinner");
+
+
+        /*
+         * SHOW / HIDE PASSWORD
+         */
+        passwordToggle.addEventListener("click", function () {
+
+            const isPassword =
+                passwordInput.type === "password";
+
+            passwordInput.type =
+                isPassword ? "text" : "password";
+
+            passwordToggle.setAttribute(
+                "aria-label",
+                isPassword
+                    ? "Hide password"
+                    : "Show password"
+            );
+
+        });
+
+
+        /*
+         * LOGIN LOADING STATE
+         */
+        loginForm.addEventListener("submit", function () {
+
+            loginButton.disabled = true;
+
+            buttonText.textContent = "Signing in...";
+
+            buttonSpinner.style.display = "inline-block";
+
+        });
+
+    </script>
+
+</body>
+</html>
+
