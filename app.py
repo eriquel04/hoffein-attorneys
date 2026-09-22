@@ -58,11 +58,11 @@ if oauth:
 # =========================================================
 
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST", "localhost"),
-    "user": os.getenv("DB_USER", "root"),
-    "password": os.getenv("DB_PASSWORD", ""),
-    "database": os.getenv("DB_NAME", "hoffein_attorneys"),
-    "port": int(os.getenv("DB_PORT", "3306"))
+    "host": os.getenv("DB_HOST") or os.getenv("MYSQLHOST", "localhost"),
+    "user": os.getenv("DB_USER") or os.getenv("MYSQLUSER", "root"),
+    "password": os.getenv("DB_PASSWORD") or os.getenv("MYSQLPASSWORD", ""),
+    "database": os.getenv("DB_NAME") or os.getenv("MYSQLDATABASE", "hoffein_attorneys"),
+    "port": int(os.getenv("DB_PORT") or os.getenv("MYSQLPORT", "3306"))
 }
 
 
@@ -3059,4 +3059,3 @@ if __name__ == "__main__":
         host="127.0.0.1",
         port=int(os.getenv("PORT", "5000"))
     )
-
