@@ -16,15 +16,16 @@ The local `.env` file is ignored and must never be committed.
 
 1. Create a Railway project.
 2. Add a MySQL service.
-3. Copy the MySQL connection values into the Render web service:
+3. In Railway MySQL **Settings > Networking**, enable **Public Networking**. Render is outside Railway's private network, so it must use Railway's public TCP proxy.
+4. Copy `MYSQL_PUBLIC_URL` into the Render web service. This is the simplest option. The application also accepts the individual connection values:
    - `MYSQLHOST` -> `DB_HOST`
    - `MYSQLPORT` -> `DB_PORT`
    - `MYSQLUSER` -> `DB_USER`
    - `MYSQLPASSWORD` -> `DB_PASSWORD`
    - `MYSQLDATABASE` -> `DB_NAME`
-4. The first Render deploy runs `init_database.py`, which creates the schema from `schema.sql` and creates test accounts when their passwords are configured.
+5. The first Render deploy runs `init_database.py`, which creates the schema from `schema.sql` and creates test accounts when their passwords are configured.
 
-The application also reads Railway's `MYSQL*` names directly if the `DB_*` aliases are not set.
+When `MYSQL_PUBLIC_URL` is configured, it takes precedence over the individual `DB_*` values. Do not set `DB_HOST` to Railway's private hostname when connecting from Render.
 
 ## 3. Create the Render web service
 
@@ -34,7 +35,7 @@ The application also reads Railway's `MYSQL*` names directly if the `DB_*` alias
    - Build command: `pip install -r requirements.txt`
    - Start command: `python init_database.py && gunicorn --bind 0.0.0.0:$PORT app:app`
 4. Add the secret environment variables listed in `.env.example`.
-5. Set `DB_*` to the Railway MySQL values.
+5. Set `MYSQL_PUBLIC_URL` to Railway's public connection URL, or set the individual `DB_*` values.
 6. Use `/api/status` as the health check path.
 
 ## Important test notes

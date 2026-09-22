@@ -12,6 +12,8 @@ services:
         generateValue: true
       - key: DB_HOST
         sync: false
+      - key: MYSQL_PUBLIC_URL
+        sync: false
       - key: DB_PORT
         value: "3306"
       - key: DB_USER

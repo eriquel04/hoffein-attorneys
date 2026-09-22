@@ -18,6 +18,7 @@ import os
 import uuid
 from datetime import datetime
 from dotenv import load_dotenv
+from urllib.parse import unquote, urlparse
 
 load_dotenv()
 
@@ -57,13 +58,34 @@ if oauth:
 # MYSQL DATABASE
 # =========================================================
 
-DB_CONFIG = {
-    "host": os.getenv("DB_HOST") or os.getenv("MYSQLHOST", "localhost"),
-    "user": os.getenv("DB_USER") or os.getenv("MYSQLUSER", "root"),
-    "password": os.getenv("DB_PASSWORD") or os.getenv("MYSQLPASSWORD", ""),
-    "database": os.getenv("DB_NAME") or os.getenv("MYSQLDATABASE", "hoffein_attorneys"),
-    "port": int(os.getenv("DB_PORT") or os.getenv("MYSQLPORT", "3306"))
-}
+def get_database_config():
+    railway_url = os.getenv("MYSQL_PUBLIC_URL") or os.getenv("MYSQL_URL")
+
+    if railway_url:
+        parsed_url = urlparse(railway_url)
+        if parsed_url.scheme not in {"mysql", "mysql+mysqlconnector"}:
+            raise RuntimeError("MYSQL_PUBLIC_URL must be a MySQL connection URL")
+        if not parsed_url.hostname or not parsed_url.username:
+            raise RuntimeError("MYSQL_PUBLIC_URL must include a host and username")
+
+        return {
+            "host": parsed_url.hostname,
+            "user": unquote(parsed_url.username),
+            "password": unquote(parsed_url.password or ""),
+            "database": parsed_url.path.lstrip("/") or "hoffein_attorneys",
+            "port": parsed_url.port or 3306,
+        }
+
+    return {
+        "host": os.getenv("DB_HOST") or os.getenv("MYSQLHOST", "localhost"),
+        "user": os.getenv("DB_USER") or os.getenv("MYSQLUSER", "root"),
+        "password": os.getenv("DB_PASSWORD") or os.getenv("MYSQLPASSWORD", ""),
+        "database": os.getenv("DB_NAME") or os.getenv("MYSQLDATABASE", "hoffein_attorneys"),
+        "port": int(os.getenv("DB_PORT") or os.getenv("MYSQLPORT", "3306")),
+    }
+
+
+DB_CONFIG = get_database_config()
 
 
 def get_db_connection():
