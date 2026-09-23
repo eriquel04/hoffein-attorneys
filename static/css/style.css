@@ -161,6 +161,14 @@ body{overflow-x:hidden}
 .portal-page table{display:block;width:100%;overflow-x:auto;white-space:nowrap}
 .portal-page .document-request-form .btn{width:100%}
 }
+@media(min-width:701px) and (max-width:800px){
+.auth-page{padding:0}
+.auth-page .auth-container{display:block;max-width:720px;min-height:0;border-radius:0;box-shadow:none}
+.auth-showcase{display:flex;min-height:0;align-items:flex-start;padding:42px 48px}
+.showcase-logo{width:125px;margin-bottom:34px}
+.showcase-text h1{font-size:46px}
+.auth-form-section{min-height:0;padding:48px 72px 58px}
+}
 @media(max-width:380px){
 .landing-page .topline{font-size:9px}
 .landing-page .nav-container{padding-left:14px;padding-right:14px}
