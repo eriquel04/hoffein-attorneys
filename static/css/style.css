@@ -121,6 +121,49 @@ footer{background:#020d18;color:#fff;padding:55px 8% 20px}.footer-content{displa
 .admin-dashboard-header{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:28px}.dashboard-eyebrow{display:block;margin-bottom:12px;color:#536fde;font-size:10px;font-weight:700;letter-spacing:2px}.admin-header-note{display:flex;min-width:190px;flex-direction:column;gap:4px;padding:15px 18px;background:#fff;border:1px solid #e7e9ef;border-top:2px solid #536fde;box-shadow:0 5px 15px rgba(38,47,70,.04)}.admin-header-note span,.admin-header-note small{color:#8b93a4;font-size:10px;letter-spacing:.5px}.admin-header-note strong{color:#374054;font-size:13px}.admin-stat-grid{margin-top:0}.admin-stat-grid .feature-card{min-height:148px}.admin-stat-grid .feature-icon{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;letter-spacing:1px}.admin-stat-grid .feature-card h3{margin-top:20px}.admin-stat-grid .feature-card p{line-height:1.5}
 @media(max-width:900px){.portal-page{--workspace-sidebar:0px}.portal-page .portal-sidebar{transform:translateX(-100%);transition:transform .25s ease}.portal-page.sidebar-open .portal-sidebar{transform:translateX(0)}.portal-page .portal-topbar{left:0}.portal-page .dashboard-main{padding-right:22px;padding-left:22px}.portal-page .practice-grid,.portal-page .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.portal-page .portal-topbar .nav-container{padding:0 16px;gap:10px}.portal-search{width:auto;flex:1}.portal-page .portal-topbar nav>a:not(.portal-profile){display:none}.portal-profile{font-size:0!important}.portal-profile span{font-size:13px}.portal-page .dashboard-main{padding-top:88px}.portal-page .dashboard-title{font-size:18px}.portal-page .practice-grid,.portal-page .feature-grid{grid-template-columns:1fr}.portal-page .portal-switcher{width:100%}.portal-page .portal-tab{padding:11px 5px;font-size:8px}.portal-page .profile-quick{max-width:none}.portal-page .dashboard-section{padding:22px 18px}.admin-dashboard-header{align-items:stretch;flex-direction:column;gap:18px}.admin-header-note{min-width:0}.admin-stat-grid .feature-card{min-height:130px}}
+@media(max-width:700px){
+body{overflow-x:hidden}
+.landing-page .brand-text span{display:none}
+.landing-page .brand img{width:48px;height:48px}
+.landing-page .hero h1{letter-spacing:-.5px}
+.landing-page .hero-buttons .primary-btn{width:100%;max-width:290px}
+.landing-page .approach-panel{padding:28px 0}
+.landing-page .approach-panel .feature-icon{flex-basis:36px;width:36px;height:36px}
+.landing-page .approach-panel h3{font-size:21px}
+.landing-page .approach-panel p{font-size:13px}
+.landing-page .practice-card{padding:28px 22px}
+.landing-page .practice-card h3{font-size:26px}
+.landing-page .cta .primary-btn{width:100%}
+.auth-form-section{padding-left:20px;padding-right:20px}
+.auth-form-section .auth-box{min-width:0}
+.login-header h2{font-size:clamp(27px,8vw,34px)}
+.google-button,.auth-form-section .auth-button{width:100%;min-height:52px}
+.security-notice{align-items:flex-start;text-align:center;line-height:1.5}
+.portal-page .dashboard-main{padding-left:16px;padding-right:16px}
+.portal-page .dashboard-header{min-width:0}
+.portal-page .dashboard-subtitle{line-height:1.6}
+.portal-page .client-overview-grid{grid-template-columns:1fr;gap:22px}
+.portal-page .case-progress{display:flex;gap:18px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:thin}
+.portal-page .progress-step{flex:0 0 92px}
+.portal-page .client-id-banner,.portal-page .profile-quick{align-items:flex-start;flex-wrap:wrap}
+.portal-page .client-id-banner small{flex-basis:100%;margin-left:0}
+.portal-page .client-result-header{flex-direction:column}
+.portal-page .client-details-grid{grid-template-columns:1fr}
+.portal-page .dashboard-section{overflow:hidden}
+.portal-page table{display:block;width:100%;overflow-x:auto;white-space:nowrap}
+.portal-page .document-request-form .btn{width:100%}
+}
+@media(max-width:380px){
+.landing-page .topline{font-size:9px}
+.landing-page .nav-container{padding-left:14px;padding-right:14px}
+.landing-page .hero-content{padding-left:16px;padding-right:16px}
+.landing-page .hero h1{font-size:clamp(48px,15vw,68px)}
+.landing-page .features,.landing-page .practice,.landing-page .team{padding-left:16px;padding-right:16px}
+.landing-page .cta{padding-left:16px;padding-right:16px}
+.landing-page footer{padding-left:16px;padding-right:16px}
+.auth-form-section{padding-left:16px;padding-right:16px}
+.portal-page .portal-tab{font-size:7px;letter-spacing:.3px}
+}
 .client-lookup-section .section-intro{margin-bottom:24px}.client-search-form{max-width:700px}.client-search-form label{display:block;margin-bottom:8px;color:#374054;font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}.client-search-controls{display:flex;gap:10px}.client-search-controls input{flex:1;min-width:0;padding:13px 14px;font-size:13px;letter-spacing:.5px}.client-search-controls .btn{white-space:nowrap}.client-search-message{max-width:700px;margin-top:18px;padding:13px 15px;border-left:3px solid #d97979;background:#fff2f2;color:#984d4d;font-size:12px}.client-result{max-width:700px;margin-top:24px;padding:20px;background:#f7fbfc;border:1px solid #dcecef;border-left:3px solid #43b5e3}.client-result-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:17px;border-bottom:1px solid #dcecef}.client-id-label{display:block;margin-bottom:5px;color:#7c929c;font-size:9px;font-weight:700;letter-spacing:1.5px}.client-result-header strong{color:#087696;font-size:18px;letter-spacing:1px}.client-status{padding:6px 9px;background:#e0f5fa;color:#087696;font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase}.client-details-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}.client-details-grid div{display:flex;flex-direction:column;gap:5px}.client-details-grid span{color:#8b93a4;font-size:10px}.client-details-grid strong{color:#374054;font-size:13px}.client-id-banner{display:flex;align-items:center;gap:14px;max-width:600px;margin-top:20px;padding:13px 16px;background:#e4f6fa;border-left:3px solid #00a4d4;color:#075d75}.client-id-banner span{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}.client-id-banner strong{font-size:15px;letter-spacing:1px}.client-id-banner small{margin-left:auto;color:#4f7c89;font-size:11px}.success-message{margin:18px 0;padding:13px 15px;border-left:3px solid #27a56a;background:#eaf8f0;color:#216f4b;font-size:13px}
 .document-request-panel,.requested-documents-panel{margin:20px 0;padding:18px;background:#f7fbfc;border:1px solid #dcecef;border-left:3px solid #43b5e3}.document-request-panel h3{margin:4px 0 6px;color:#374054;font:700 15px "DM Sans",sans-serif}.document-request-panel p,.requested-documents-panel p{margin:0 0 14px;color:#6e808a;font-size:12px;line-height:1.6}.document-request-form{display:grid;gap:10px;max-width:700px}.document-request-form input,.document-request-form select,.document-request-form textarea,.requested-documents-panel select{width:100%;padding:11px 12px;border:1px solid #cbdbe1;background:#fff;color:#17313d}.document-request-form textarea{resize:vertical}.requested-documents-panel small{display:block;margin-top:10px;color:#6e808a;font-size:11px;line-height:1.5}
 .dashboard-card-action{display:inline-flex;align-items:center;gap:8px;margin-top:18px;color:#087696;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}.dashboard-card-action span{font-size:16px;font-weight:400}.dashboard-card-action:hover{color:#00a4d4}.upload-disabled-note{display:block;margin-top:12px;color:#8b93a4;font-size:11px;font-style:italic}
@@ -133,4 +176,3 @@ footer{background:#020d18;color:#fff;padding:55px 8% 20px}.footer-content{displa
 @media(max-width:700px){.client-overview-grid,.client-overview-lower{grid-template-columns:1fr}.case-progress{grid-template-columns:1fr 1fr;gap:14px}.client-action-panel{align-items:flex-start;flex-direction:column}}
 @media(max-width:560px){.client-case-card-header{align-items:flex-start;flex-direction:column}.client-case-meta{grid-template-columns:1fr}.client-case-actions{flex-direction:column;gap:12px}}
 @media(max-width:560px){.client-search-controls{align-items:stretch;flex-direction:column}.client-result-header{align-items:flex-start;flex-direction:column}.client-details-grid{grid-template-columns:1fr}.client-id-banner{align-items:flex-start;flex-direction:column;gap:6px}.client-id-banner small{margin-left:0}}
-
